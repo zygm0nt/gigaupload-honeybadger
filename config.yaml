@@ -1,0 +1,4 @@
+- connectors:
+    - dropbox: 
+        - token: 'vlOs9aR1WXAAAAAAAAAABdEBrYMtqS4KPGKONq6UVoALWXGN0ulU3le6CUqrf3ZT'
+        - token: 'ABC'
