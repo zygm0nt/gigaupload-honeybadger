@@ -11,7 +11,7 @@ import dropbox
 from dropbox.files import WriteMode
 from dropbox.exceptions import ApiError, AuthError
 
-from connectors impor CloudConnector
+from connectors import CloudConnector
 
 # Add OAuth2 access token here. 
 # You can generate one for yourself in the App Console.
@@ -23,16 +23,16 @@ BACKUPPATH = '/my-file-backup.txt'
 
 class DropboxConnector(CloudConnector):
 
-  def init(self, config):
-    if (len(config.token) == 0):
+  def __init__(self, config):
+    if (len(config.get('token')) == 0):
         sys.exit("ERROR: Looks like you didn't add your access token. Open up backup-and-restore-example.py in a text editor and paste in your token in line 14.")
     print("Creating a Dropbox object...")
-    dbx = dropbox.Dropbox(config.token)
+    self.dbx = dropbox.Dropbox(config.get('token'))
 
   def validate(self):
     # Check that the access token is valid
     try:
-        dbx.users_get_current_account()
+        self.dbx.users_get_current_account()
     except AuthError as err:
         sys.exit("ERROR: Invalid access token; try re-generating an access token from the app console on the web.")
 
@@ -43,7 +43,7 @@ class DropboxConnector(CloudConnector):
         target_path = os.path.basename(filename)
         print("Uploading " + filename + " to Dropbox as /" + target_path + "...")
         try:
-            dbx.files_upload(f, "/" + target_path, mode=WriteMode('overwrite'))
+            self.dbx.files_upload(f, "/" + target_path, mode=WriteMode('overwrite'))
         except ApiError as err:
             # This checks for the specific error where a user doesn't have
             # enough Dropbox space quota to upload this file
@@ -58,7 +58,7 @@ class DropboxConnector(CloudConnector):
                 sys.exit()
 
   def download(self, filename, to_file):
-    dbx.files_download_to_file(to_file, filename, None)
+    self.dbx.files_download_to_file(to_file, filename, None)
 
  
 # Uploads contents of LOCALFILE to Dropbox

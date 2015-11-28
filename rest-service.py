@@ -7,9 +7,12 @@ from werkzeug.exceptions import HTTPException
 
 import uuid
 
+import config
 
 app = Flask(__name__)
 
+cfg = config.Config()
+connectors = config.init_connectors(cfg)
 
 def make_json_error(ex):
   response = jsonify(message=str(ex))
@@ -24,19 +27,14 @@ def output_path(filename):
 def response(resp):
   return jsonify(resp)
 
-@app.route('/')
-def index():
-    if 'username' in session:
-        return 'Logged in as %s' % escape(session['username'])
-    return 'You are not logged in'
-
 @app.route("/upload", methods=['POST'])
 def upload_file():
     if request.headers['Content-Type'] == 'application/octet-stream':
-      uuid = str(uuid.uuid4())
-      f = open(output_path(uuid), 'wb') 
+      fuuid = str(uuid.uuid4())
+      f = open(output_path(fuuid), 'wb') 
       f.write(request.data)
-      return response({'status': 'OK', 'filename': uuid})
+      connectors[0].upload(output_path(fuuid))
+      return response({'status': 'OK', 'filename': fuuid})
     else:
       return make_json_error({'code':400, 'message':'wrong content-type'})
 
