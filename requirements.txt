@@ -4,7 +4,7 @@ itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
 onedrivesdk==1.0.1
-PyYAML==3.11
+PyYAML==5.4
 requests==2.8.1
 six==1.10.0
 urllib3==1.12
